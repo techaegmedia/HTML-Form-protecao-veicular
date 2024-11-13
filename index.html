@@ -1,0 +1,337 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Formulário</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+  </head>
+  <body class="bg-gray-100">
+    <div class="flex items-center justify-center min-h-screen">
+      <div
+        class="w-full sm:w-3/4 md:w-1/2 lg:w-[80%] bg-white p-6 rounded-xl shadow-lg"
+      >
+        <!-- Formulário -->
+        <form id="form" class="space-y-4">
+          <div class="flex flex-col space-y-2">
+            <label class="font-semibold" for="name">Qual o seu nome</label>
+            <input
+              id="name"
+              type="text"
+              placeholder="Digite seu nome"
+              class="p-3 border border-gray-300 rounded-md w-full"
+              required
+            />
+          </div>
+
+          <div class="flex flex-col space-y-2">
+            <label class="font-semibold" for="email"
+              >Qual seu e-mail corporativo</label
+            >
+            <input
+              id="email"
+              type="email"
+              placeholder="Digite seu e-mail"
+              class="p-3 border border-gray-300 rounded-md w-full"
+              required
+            />
+          </div>
+
+          <div class="flex flex-col space-y-2">
+            <label class="font-semibold" for="association"
+              >Qual o nome da sua associação</label
+            >
+            <input
+              id="association"
+              type="text"
+              placeholder="Digite o nome da empresa"
+              class="p-3 border border-gray-300 rounded-md w-full"
+              required
+            />
+          </div>
+
+          <div class="flex flex-col space-y-2">
+            <label class="font-semibold" for="phone">Telefone</label>
+            <input
+              id="phone"
+              type="tel"
+              placeholder="(99) 9 9999-9999"
+              class="p-3 border border-gray-300 rounded-md w-full"
+              maxlength="16"
+              required
+            />
+          </div>
+
+          <div class="flex flex-col space-y-4">
+            <label class="font-semibold">Você é consultor(a)?</label>
+            <div class="flex space-x-4">
+              <button
+                type="button"
+                class="py-2 px-4 bg-gray-200 rounded-md"
+                onclick="selectConsultant(true)"
+              >
+                Sim
+              </button>
+              <button
+                type="button"
+                class="py-2 px-4 bg-gray-200 rounded-md"
+                onclick="selectConsultant(false)"
+              >
+                Não
+              </button>
+            </div>
+          </div>
+
+          <div id="consultor-section" class="hidden flex flex-col space-y-4">
+            <label class="font-semibold"
+              >Quantas adesões você faz por mês?</label
+            >
+            <select id="adesoes" class="p-3 border border-gray-300 rounded-md">
+              <option value="">Selecione a quantidade de adesões</option>
+              <option value="0-30">0 a 30 Adesões</option>
+              <option value="+30">+30 Adesões</option>
+            </select>
+          </div>
+
+          <div id="cargo-placas-section" class="hidden space-y-4">
+            <div class="flex flex-col space-y-4">
+              <label class="font-semibold">Qual é o seu cargo?</label>
+              <select id="cargo" class="p-3 border border-gray-300 rounded-md">
+                <option value="">Selecione seu cargo</option>
+                <option value="Presidente">Presidente</option>
+                <option value="Diretor">Diretor</option>
+                <option value="Gerente Comercial">Gerente Comercial</option>
+                <option value="Outro">Outro</option>
+              </select>
+            </div>
+
+            <div class="flex flex-col space-y-4">
+              <label class="font-semibold"
+                >Quantas placas existem na sua base atualmente?</label
+              >
+              <select id="placas" class="p-3 border border-gray-300 rounded-md">
+                <option value="">Selecione a quantidade de placas</option>
+                <option value="1-200">0 Placas</option>
+                <option value="1-200">1-200 Placas</option>
+                <option value="201-500">201-500 Placas</option>
+                <option value="501-1000">501-1000 Placas</option>
+                <option value="1001-3000">1001-4999 Placas</option>
+                <option value="5000+">5000+ Placas</option>
+              </select>
+            </div>
+          </div>
+
+          <div>
+            <button
+              type="submit"
+              class="w-full bg-sky-500 text-white py-2 px-4 rounded-md font-bold"
+            >
+              Enviar
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <script>
+      let formData = {
+        name: "",
+        email: "",
+        association: "",
+        phone: "",
+        isConsultant: null,
+        adesoes: "",
+        cargo: "",
+        placas: "",
+        utm_campaign: "",
+        utm_content: "",
+        utm_source: "",
+        utm_medium: "",
+        utm_term: "",
+      };
+
+      // Função para obter UTM parameters da URL
+      function getUTMParameters() {
+        const urlParams = new URLSearchParams(window.location.search);
+        formData.utm_campaign = urlParams.get("utm_campaign") || "";
+        formData.utm_content = urlParams.get("utm_content") || "";
+        formData.utm_source = urlParams.get("utm_source") || "";
+        formData.utm_medium = urlParams.get("utm_medium") || "";
+        formData.utm_term = urlParams.get("utm_term") || "";
+      }
+
+      getUTMParameters();
+
+      // Função para formatar e validar o número de telefone
+      const phoneInput = document.getElementById("phone");
+      phoneInput.addEventListener("input", function (e) {
+        const value = e.target.value.replace(/\D/g, "").slice(0, 11);
+        formData.phone = value; // Armazena o valor "limpo" (somente números)
+        let formatted = value;
+        if (value.length > 2)
+          formatted = `(${value.slice(0, 2)}) ${value.slice(2)}`;
+        if (value.length > 7)
+          formatted = `(${value.slice(0, 2)}) ${value.slice(
+            2,
+            7
+          )}-${value.slice(7)}`;
+        phoneInput.value = formatted;
+      });
+
+      // Função para alternar entre consultor e cliente
+      function selectConsultant(isConsultant) {
+        formData.isConsultant = isConsultant;
+        document
+          .getElementById("consultor-section")
+          .classList.toggle("hidden", !isConsultant);
+        document
+          .getElementById("cargo-placas-section")
+          .classList.toggle("hidden", isConsultant);
+      }
+
+      // Função de envio do formulário
+      document.getElementById("form").addEventListener("submit", function (e) {
+        e.preventDefault();
+
+        formData.name = document.getElementById("name").value;
+        formData.email = document.getElementById("email").value;
+        formData.association = document.getElementById("association").value;
+        formData.phone = document.getElementById("phone").value;
+
+        // Verifica existência de whatsapp
+        const formatedPhone = formData.phone
+          .replaceAll(" ", "")
+          .replaceAll("(", "")
+          .replaceAll(")", "")
+          .replaceAll("-", "");
+        fetch(
+          `https://api.z-api.io/instances/3D7852425F8E40FF893D3E72838DD104/token/FCDA52D325CCCDC22CD583EB/phone-exists/55${formatedPhone}`,
+          {
+            headers: {
+              "Client-Token": "F9aa89bc6dedc4b998458decc01365a7aS",
+            },
+          }
+        )
+          .then((res) => res.json())
+          .then((data) => {
+            if (!data.exists) {
+              alert("Seu número precisa estar cadastrado no WhatsApp");
+              return;
+            }
+          });
+
+        // Condições para capturar adesoes, cargo e placas conforme o tipo de usuário
+        const adesoes = document.getElementById("adesoes").value;
+        if (formData.isConsultant && adesoes) {
+          formData.adesoes = adesoes;
+        } else {
+          const cargo = document.getElementById("cargo").value;
+          const placas = document.getElementById("placas").value;
+
+          // Validação adicional para garantir que os campos obrigatórios estejam preenchidos
+          if (!cargo || !placas) {
+            alert("Preencha os campos Cargo e Placas.");
+            return;
+          }
+          formData.cargo = cargo;
+          formData.placas = placas;
+        }
+
+        // Gerar personID numérico único
+        const personID = Date.now() + Math.floor(Math.random() * 1000000);
+
+        // Prepara o payload para envio ao Make
+        const payloadMake = {
+          ...formData,
+          person_id: personID,
+          phone: `+55${formData.phone}`, // Adiciona o código do país para o WhatsApp
+          deal_title: `Negócio de ${formData.name} - ${formData.email}`,
+          currency: "BRL",
+        };
+
+        console.log("Payload Make:", payloadMake);
+
+        // Envio para Make
+        fetch("https://hook.us1.make.com/wlvlrt2fsu9ti1jg4kp3n7j737aqpewd", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(payloadMake),
+        })
+          .then((response) => {
+            if (response.ok) {
+              console.log("Dados enviados para o Make com sucesso.");
+
+              // Condicionais de redirecionamento
+              if (formData.isConsultant) {
+                if (formData.adesoes === "0-30") {
+                  window.location.href =
+                    "https://protecao.aegmedia.com.br/reuniao/obrigado-ebook";
+                } else {
+                  window.location.href =
+                    "https://protecao.aegmedia.com.br/reuniao/obrigado-ebook";
+                }
+              } else {
+                if (formData.cargo && formData.placas) {
+                  window.location.href =
+                    "https://protecao.aegmedia.com.br/reuniao/obrigado-call";
+                } else {
+                  window.location.href =
+                    "https://protecao.aegmedia.com.br/reuniao/obrigado-call";
+                }
+              }
+            } else {
+              alert("Erro ao enviar dados para o Make.");
+            }
+          })
+          .catch((error) => {
+            console.error("Erro ao enviar os dados para o Make:", error);
+            alert("Erro ao enviar formulário.");
+          });
+
+        // Prepara o payload para envio ao WordPress
+        const payloadWP = new URLSearchParams({
+          action: "salvar_lead_no_wordpress",
+          name: formData.name,
+          email: formData.email,
+          association: formData.association,
+          phone: formData.phone,
+          isConsultant: formData.isConsultant,
+          adesoes: formData.adesoes,
+          cargo: formData.cargo,
+          placas: formData.placas,
+          utm_campaign: formData.utm_campaign,
+          utm_source: formData.utm_source,
+          utm_medium: formData.utm_medium,
+          utm_term: formData.utm_term,
+          utm_content: formData.utm_content,
+        });
+
+        // Envio para WordPress
+        fetch(
+          "https://protecao.aegmedia.com.br/reuniao/wp-admin/admin-ajax.php",
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/x-www-form-urlencoded",
+            },
+            body: payloadWP,
+          }
+        )
+          .then((response) => response.json())
+          .then((data) => {
+            if (data.success) {
+              console.log("Lead salvo com sucesso no WordPress.");
+            } else {
+              alert("Erro ao salvar lead no WordPress.");
+            }
+          })
+          .catch((error) => {
+            console.error("Erro ao enviar os dados para o WordPress:", error);
+            alert("Erro ao enviar formulário.");
+          });
+      });
+    </script>
+  </body>
+</html>
